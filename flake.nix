@@ -1,5 +1,5 @@
 {
-  description = "Precompiled boltz-client flake.";
+  description = "A nix flake for boltz-client.";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
@@ -8,6 +8,7 @@
   outputs = {
     self,
     nixpkgs,
+    ...
   }: let
     supportedSystems = ["x86_64-linux" "aarch64-linux"];
     pkgsBySystem = nixpkgs.lib.getAttrs supportedSystems nixpkgs.legacyPackages;
@@ -24,12 +25,12 @@
           hash = "sha256-HcPlxsDoxXn9NS7KR3+3Q/q/Lsj+dWMEyFemQ0vStwg=";
         };
 
-        nativeBuildInputs = with pkgs; [
-          autoPatchelfHook
+        nativeBuildInputs = [
+          pkgs.autoPatchelfHook
         ];
 
-        buildInputs = with pkgs; [
-          stdenv.cc.cc.lib # This provides libstdc++
+        buildInputs = [
+          pkgs.stdenv.cc.cc.lib # for libstdc++
         ];
 
         installPhase = ''
