@@ -2,7 +2,7 @@
   description = "A nix flake for boltz-client.";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
   };
 
   outputs = {
@@ -13,17 +13,29 @@
     supportedSystems = ["x86_64-linux" "aarch64-linux"];
     pkgsBySystem = nixpkgs.lib.getAttrs supportedSystems nixpkgs.legacyPackages;
     forAllPkgs = fn: nixpkgs.lib.mapAttrs (system: pkgs: (fn pkgs)) pkgsBySystem;
-    version = "2.3.4";
+    archForPkgs = pkgs:
+      if pkgs.stdenv.isAarch64
+      then "arm64"
+      else "amd64";
+    hashByArch = arch:
+      if arch == "arm64"
+      then "sha256-vfz/oJrxZCeJ1yVIE95ynKpVwRu+dbBVdzu7onl748w="
+      else "sha256-K4rtfPh3KW+6ON/3HLMDrbBcBiQGjpxCbsikZ34bNSU=";
+    version = "2.8.4";
 
     boltzClientFor = pkgs:
       pkgs.stdenv.mkDerivation {
         inherit version;
         pname = "boltz-client";
 
-        src = pkgs.fetchzip {
-          url = "https://github.com/BoltzExchange/boltz-client/releases/download/v2.3.4/boltz-client-linux-amd64-v2.3.4.tar.gz";
-          hash = "sha256-HcPlxsDoxXn9NS7KR3+3Q/q/Lsj+dWMEyFemQ0vStwg=";
-        };
+        src = let
+          arch = archForPkgs pkgs;
+          hash = hashByArch arch;
+        in
+          pkgs.fetchzip {
+            inherit hash;
+            url = "https://github.com/BoltzExchange/boltz-client/releases/download/v${version}/boltz-client-linux-${arch}-v${version}.tar.gz";
+          };
 
         nativeBuildInputs = [
           pkgs.autoPatchelfHook
