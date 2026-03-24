@@ -1,0 +1,50 @@
+name: Auto Update
+
+on:
+  schedule:
+    - cron: "0 0,12 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@main
+
+      - name: Run update script
+        id: update
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          chmod +x ./update.sh
+          nix develop --command ./update.sh
+
+          if [ "$(git rev-parse HEAD)" != "$(git rev-parse origin/main)" ]; then
+            echo "updates_found=true" >> $GITHUB_OUTPUT
+          else
+            echo "updates_found=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Validate build
+        if: steps.update.outputs.updates_found == 'true'
+        run: |
+          nix build .#boltz-client
+          ./result/bin/boltzd --version
+          ./result/bin/boltzcli --version
+
+      - name: Push updates
+        if: steps.update.outputs.updates_found == 'true'
+        run: |
+          git push origin main
