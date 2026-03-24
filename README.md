@@ -2,7 +2,7 @@
 
 A Nix Flake packaging [boltz-client](https://github.com/BoltzExchange/boltz-client) — submarine swaps, channel rebalancing, and wallet management for CLN & LND.
 
-Uses precompiled binaries from upstream releases (building from source is infeasible due to Docker-based GDK builds and Rust/C FFI).
+Currently wraps upstream precompiled binaries. A fully nixified source build is on the roadmap.
 
 ## Usage
 
@@ -93,3 +93,10 @@ nix develop --command ./update.sh
 # Automated (GitHub Actions)
 # Twice daily: checks for new releases, validates build, pushes to main
 ```
+
+## Roadmap
+
+- [ ] Nixified source build (Go + Rust FFI via uniffi-bindgen-go, cargo, BDK/LWK)
+- [ ] Darwin support
+- [ ] Contribute to nixpkgs
+- [ ] Home-manager module

@@ -6,7 +6,7 @@
 
 Nix Flake packaging [boltz-client](https://github.com/BoltzExchange/boltz-client) — submarine swaps, channel rebalancing, and wallet management for CLN & LND.
 
-Uses precompiled binaries from upstream releases. Building from source is infeasible (Docker-based GDK builds, Rust/C FFI via uniffi-bindgen-go).
+Uses precompiled binaries from upstream releases. A fully nixified source build is on the roadmap.
 
 ### What's In The Box
 
@@ -184,7 +184,7 @@ nix build .#boltz-client
 - **Don't skip `nix flake check`** — it catches eval errors, formatting issues, module problems
 - **Don't commit without testing both binaries** — `boltzd` and `boltzcli` have different dependency profiles
 - **Don't forget `stdenv.cc.cc.lib`** — libstdc++ crash is a known gotcha for CGO Go binaries on NixOS
-- **Don't build from source when precompiled exists** — upstream build uses Docker, uniffi-bindgen-go, cargo; not worth fighting
+- **Don't build from source when precompiled works** — upstream build uses Docker, uniffi-bindgen-go, cargo; a nixified build is on the roadmap but precompiled is pragmatic for now
 - **Don't pin to stable nixpkgs without reason** — we track upstream closely, unstable is fine
 
 ---
