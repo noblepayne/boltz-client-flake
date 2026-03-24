@@ -21,7 +21,7 @@ This flake is designed to work standalone and alongside [nix-bitcoin](https://gi
 - Services depend on upstream services (e.g., bitcoind) via `requires`/`after`
 - Config files generated with `pkgs.writeText` (nix-bitcoin uses raw text generation, not `pkgs.formats`)
 
-**Our module doesn't need to be a nix-bitcoin module**, but it should be easy to import into a nix-bitcoin setup and shouldn't conflict with their conventions. Future goal: contribute upstream to nix-bitcoin.
+**Our module doesn't need to be a nix-bitcoin module**, but it should be easy to import into a nix-bitcoin setup and shouldn't conflict with their conventions. We provide `nixBitcoin.enable = true` as an opt-in toggle for explicit user/group and tmpfiles. Future goal: contribute upstream to nix-bitcoin (at that point, native access to `defaultHardening`, `operator.groups`, etc.).
 
 | Binary | What it does |
 |--------|-------------|

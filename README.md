@@ -79,8 +79,34 @@ When enabled, the module runs `boltzd` as a systemd service and makes `boltzcli`
 | `services.boltz-client.enable` | `false` | Enable the boltzd service |
 | `services.boltz-client.package` | flake package | Package providing `boltzd` and `boltzcli` |
 | `services.boltz-client.dataDir` | `/var/lib/boltz` | Data directory for boltzd |
+| `services.boltz-client.user` | `"boltz"` | User to run boltzd as |
+| `services.boltz-client.group` | `"boltz"` | Group to run boltzd as |
 | `services.boltz-client.settings` | `{}` | Boltz config as Nix attrs, converted to TOML |
 | `services.boltz-client.extraArgs` | `[]` | Extra CLI args passed to boltzd |
+| `services.boltz-client.nixBitcoin.enable` | `false` | nix-bitcoin integration (explicit user/group, tmpfiles)
+
+### nix-bitcoin
+
+For deployments alongside [nix-bitcoin](https://github.com/fort-nix/nix-bitcoin), enable explicit user/group management:
+
+```nix
+{
+  services.boltz-client = {
+    enable = true;
+    nixBitcoin.enable = true;
+    settings = {
+      node = "lnd";
+      network = "mainnet";
+      # ... lnd, rpc settings
+    };
+  };
+
+  # Grant CLI access to operator
+  nix-bitcoin.operator.groups = ["boltz"];
+}
+```
+
+Without `nixBitcoin.enable`, the module uses `DynamicUser` (standalone mode).
 
 ## Updates
 
@@ -96,6 +122,6 @@ nix develop --command ./update.sh
 
 ## Roadmap
 
-- [ ] nix-bitcoin compatibility (module integrates with nix-bitcoin ecosystem)
+- [x] nix-bitcoin compatibility (`nixBitcoin.enable` toggle)
 - [ ] Nixified source build (Go + Rust FFI via uniffi-bindgen-go, cargo, BDK/LWK)
 - [ ] Contribute upstream to nix-bitcoin
