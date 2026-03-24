@@ -8,7 +8,20 @@ Nix Flake packaging [boltz-client](https://github.com/BoltzExchange/boltz-client
 
 Uses precompiled binaries from upstream releases. A fully nixified source build is on the roadmap.
 
-### What's In The Box
+### Deployment Context
+
+This flake is designed to work standalone and alongside [nix-bitcoin](https://github.com/fort-nix/nix-bitcoin) — a NixOS framework for Bitcoin/Lightning nodes. Several of our systems run nix-bitcoin, so the module should integrate cleanly with that ecosystem.
+
+**nix-bitcoin conventions to align with (where they don't conflict with nixpkgs):**
+
+- Hardening via `defaultHardening` attrset (`ProtectSystem`, `MemoryDenyWriteExecute`, `SystemCallFilter`, etc.) — more comprehensive than our current hardening
+- Explicit user/group with `isSystemUser = true` (nix-bitcoin doesn't use `DynamicUser`)
+- `tmpfiles.rules` for data directory management
+- Integration with `config.nix-bitcoin.operator.groups` for CLI access
+- Services depend on upstream services (e.g., bitcoind) via `requires`/`after`
+- Config files generated with `pkgs.writeText` (nix-bitcoin uses raw text generation, not `pkgs.formats`)
+
+**Our module doesn't need to be a nix-bitcoin module**, but it should be easy to import into a nix-bitcoin setup and shouldn't conflict with their conventions. Future goal: contribute upstream to nix-bitcoin.
 
 | Binary | What it does |
 |--------|-------------|
@@ -168,6 +181,7 @@ nix build .#boltz-client
 - `DynamicUser = true` — no manual user/group management
 - `environment.systemPackages = [cfg.package]` — make CLI tools available
 - Hardened systemd: `ProtectSystem = "strict"`, `NoNewPrivileges`, `PrivateTmp`
+- Align with nix-bitcoin hardening (`defaultHardening` attrset) where possible without breaking standalone usage
 
 ### Formatting
 

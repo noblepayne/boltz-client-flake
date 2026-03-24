@@ -96,7 +96,6 @@ nix develop --command ./update.sh
 
 ## Roadmap
 
+- [ ] nix-bitcoin compatibility (module integrates with nix-bitcoin ecosystem)
 - [ ] Nixified source build (Go + Rust FFI via uniffi-bindgen-go, cargo, BDK/LWK)
-- [ ] Darwin support
-- [ ] Contribute to nixpkgs
-- [ ] Home-manager module
+- [ ] Contribute upstream to nix-bitcoin
