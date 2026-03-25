@@ -95,11 +95,24 @@ For deployments alongside [nix-bitcoin](https://github.com/fort-nix/nix-bitcoin)
     enable = true;
     nixBitcoin.enable = true;
     settings = {
-      node = "lnd";
+      node = "cln";
       network = "mainnet";
-      # ... lnd, rpc settings
+      cln = {
+        # nix-bitcoin puts CLN data at /var/lib/clightning/bitcoin/
+        # boltzd appends bitcoin/ca.pem internally, so set datadir to the parent
+        datadir = "/var/lib/clightning";
+      };
+      rpc.port = 9002;
     };
   };
+
+  # Enable CLN gRPC (boltzd connects via gRPC)
+  services.clightning.extraConfig = ''
+    grpc-port=9736
+  '';
+
+  # boltzd needs to read CLN's gRPC certs
+  users.users.boltz.extraGroups = ["clightning"];
 
   # Grant CLI access to operator
   nix-bitcoin.operator.groups = ["boltz"];
