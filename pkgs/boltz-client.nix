@@ -5,7 +5,7 @@
   autoPatchelfHook,
   ...
 }: let
-  version = "2.11.3";
+  version = "2.12.0";
   archMap = {
     x86_64-linux = "amd64";
     aarch64-linux = "arm64";
@@ -21,7 +21,7 @@ in
       url = "https://github.com/BoltzExchange/boltz-client/releases/download/v${version}/boltz-client-linux-${arch}-v${version}.tar.gz";
       hash =
         {
-          amd64 = "sha256-/8Wt4in0biqHjC2ORzEKuqtf/KcquKwhihhZi8mqrv8=";
+          amd64 = "sha256-Jx/27QqNI6Pxiuhg738SKzj0LPMEpvqVu4PAG9uq0Nc=";
           arm64 = "sha256-HWHzcqQVtAmyhskzAHqNCA62U9wWRlXXH2y1lUxFIsg=";
         }
       .${
